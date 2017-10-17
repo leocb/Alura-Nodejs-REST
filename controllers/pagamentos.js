@@ -4,6 +4,20 @@ module.exports = function(app) {
   })
 
   app.post('/pagamentos/pagamento', function(req, res) {
+
+    //Validação dos dados de pagamento
+    req.assert("forma_de_pagamento", "Forma de pagamento é obrigatório").notEmpty()
+    req.assert("valor", "Valor informado é inválido").notEmpty().isFloat()
+    req.assert("moeda", "Moeda informada é inválido").notEmpty()
+    let valErrors = req.validationErrors()
+
+    if (valErrors) {
+      console.log("Erros de validação encontrados: " + valErrors);
+      res.status(400).send(valErrors)
+      return
+    }
+
+    //Processa o pagamento (Salva no banco)
     let pagamento = req.body
     console.log("Processando novo pagamento")
 
@@ -14,13 +28,16 @@ module.exports = function(app) {
     let pagamentoDao = new app.persistencia.PagamentoDao(connection)
 
     pagamentoDao.salva(pagamento, function(erro, resultado) {
+
       if (erro) {
-        res.send(erro)
-        console.log("Erro ao processar o pagamento");
+        console.log("Erro ao processar o pagamento: " + erro);
+        res.status(400).send(erro)
         return
       }
+
       console.log("Pagamento criado");
       res.json(pagamento)
+
     })
   })
 }
