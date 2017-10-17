@@ -5,7 +5,11 @@ module.exports = function(app) {
 
   app.post('/pagamentos/pagamento', function(req, res) {
     let pagamento = req.body
-    console.log(pagamento);
-    res.send('Bip bop, eu sou um robo')
+    console.log("Processando novo pagamento")
+
+    pagamento.status = "Criado"
+    pagamento.data = new Date
+
+    res.send(pagamento)
   })
 }
