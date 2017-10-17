@@ -6,4 +6,6 @@ Procure nas mensagens do historico de commits qual o commit corresponde à aula 
 
 para facilitar a vida, importe a coleção de requests HTML do postman [clicando aqui](https://www.getpostman.com/collections/a3d3aa164a8a7ccb7e13)
 
+Dentro da pasta _files_ você encontrará o SQL necessário para criar o banco de dados em MySql e alguns outros scripts que serão necessários
+
 Bom aprendizado :smile:
