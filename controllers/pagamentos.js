@@ -30,13 +30,14 @@ module.exports = function(app) {
     pagamentoDao.salva(pagamento, function(erro, resultado) {
 
       if (erro) {
-        console.log("Erro ao processar o pagamento: " + erro);
-        res.status(400).send(erro)
+        console.log("Erro ao processar o pagamento: " + erro)
+        res.status(500).send(erro)
         return
       }
 
-      console.log("Pagamento criado");
-      res.json(pagamento)
+      console.log("Pagamento criado")
+      res.location("pagamentos/pagamento/" + resultado.insertId)
+      res.status(201).json(pagamento)
 
     })
   })
