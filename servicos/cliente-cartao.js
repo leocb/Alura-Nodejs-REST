@@ -1,4 +1,4 @@
-let restify = require('restify')
+let restify = require('restify-clients')
 
 let cliente = restify.createJsonClient({
   url: 'http://localhost:3001'
