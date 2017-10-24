@@ -64,4 +64,25 @@ module.exports = function(app) {
     })
 
   })
+
+  //CANCELA O PAGAMENTO
+  app.delete('/pagamentos/pagamento/:id', function(req, res) {
+    let id = req.params.id
+    let pagamento = {}
+
+    pagamento.id = id
+    pagamento.status = 'CANCELADO'
+
+    let connection = app.persistencia.connectionFactory()
+    let pagamentoDao = new app.persistencia.PagamentoDao(connection)
+
+    pagamentoDao.atualiza(pagamento, function(erro) {
+      if (erro) {
+        res.status(500).send(erro)
+        return
+      }
+
+      res.status(202).send(pagamento)
+    })
+  })
 }
