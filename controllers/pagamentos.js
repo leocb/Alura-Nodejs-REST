@@ -29,7 +29,6 @@ module.exports = function(app) {
     let pagamentoDao = new app.persistencia.PagamentoDao(connection)
 
     pagamentoDao.salva(pagamento, function(erro, resultado) {
-
       if (erro) {
         console.log("Erro ao processar o pagamento: " + erro)
         res.status(500).send(erro)
@@ -38,7 +37,21 @@ module.exports = function(app) {
 
       console.log("Pagamento criado")
       res.location("pagamentos/pagamento/" + resultado.insertId)
-      res.status(201).json(pagamento)
+
+      let response = {
+        "dados_do_pagamento": pagamento,
+        "links": [{
+          "href": "http://localhost:3000/pagamentos/pagamento/" + resultado.insertId,
+          "rel": "confirmar",
+          "method": "PUT"
+        }, {
+          "href": "http://localhost:3000/pagamentos/pagamento/" + resultado.insertId,
+          "rel": "cancelar",
+          "method": "DELETE"
+        }]
+      }
+
+      res.status(201).json(response)
 
     })
   })
