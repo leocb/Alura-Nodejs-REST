@@ -3,6 +3,7 @@ module.exports = function(app) {
     res.send('olá :3')
   })
 
+  //CRIA UM PAGAMENTO
   app.post('/pagamentos/pagamento', function(req, res) {
 
     //Validação dos dados de pagamento
@@ -12,7 +13,7 @@ module.exports = function(app) {
     let valErrors = req.validationErrors()
 
     if (valErrors) {
-      console.log("Erros de validação encontrados: " + valErrors);
+      console.log("Erros de validação encontrados: " + valErrors)
       res.status(400).send(valErrors)
       return
     }
@@ -21,7 +22,7 @@ module.exports = function(app) {
     let pagamento = req.body
     console.log("Processando novo pagamento")
 
-    pagamento.status = "Criado"
+    pagamento.status = "CRIADO"
     pagamento.data = new Date
 
     let connection = app.persistencia.connectionFactory()
@@ -40,5 +41,27 @@ module.exports = function(app) {
       res.status(201).json(pagamento)
 
     })
+  })
+
+  //CONFIRMA UM PAGAMENTO
+  app.put('/pagamentos/pagamento/:id', function(req, res) {
+    let id = req.params.id
+    let pagamento = {}
+
+    pagamento.id = id
+    pagamento.status = 'CONFIRMADO'
+
+    let connection = app.persistencia.connectionFactory()
+    let pagamentoDao = new app.persistencia.PagamentoDao(connection)
+
+    pagamentoDao.atualiza(pagamento, function(erro) {
+      if (erro) {
+        res.status(500).send(erro)
+        return
+      }
+
+      res.send(pagamento)
+    })
+
   })
 }
