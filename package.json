@@ -16,6 +16,7 @@
     "mysql": "^2.15.0",
     "restify": "^6.2.3",
     "restify-clients": "^1.5.2",
-    "restify-plugins": "^1.6.0"
+    "restify-plugins": "^1.6.0",
+    "soap": "^0.23.0"
   }
 }
