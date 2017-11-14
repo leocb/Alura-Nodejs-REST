@@ -8,25 +8,41 @@ module.exports = function (app) {
     let id = req.params.id
     console.log('consultando pagamento ' + id);
 
-    let connection = app.persistencia.connectionFactory();
-    let pagamentoDao = new app.persistencia.PagamentoDao(connection);
 
-    pagamentoDao.buscaPorId(id, function (erro, resultado) {
-      if (erro) {
-        console.log('erro de consulta: ' + erro);
-        res.status(500).send(erro)
+    //tenta pelo cache primeiro
+    let memcachedClient = app.servicos.memcachedClient()
+    memcachedClient.get('pagamento-' + id, (erro, retorno) => {
+      if (erro || !retorno) {
+        console.log('MISS')
+
+        //nao achei, procura no banco
+        let connection = app.persistencia.connectionFactory();
+        let pagamentoDao = new app.persistencia.PagamentoDao(connection);
+
+        pagamentoDao.buscaPorId(id, function (erro, resultado) {
+          if (erro) {
+            console.log('erro de consulta: ' + erro);
+            res.status(500).send(erro)
+            return
+          }
+
+          if (resultado.length === 0) {
+            console.log('nao encontrado')
+            res.sendStatus(204)
+            return
+          }
+
+          console.log('consulta ok: ' + JSON.stringify(resultado));
+          res.json(resultado)
+        })
+
+
         return
       }
-
-      if (resultado.length === 0) {
-        console.log('nao encontrado')
-        res.sendStatus(204)
-        return
-      }
-
-      console.log('consulta ok: ' + JSON.stringify(resultado));
-      res.json(resultado)
+      console.log('HIT')
+      res.json(retorno)
     })
+
 
   })
 
@@ -104,6 +120,15 @@ module.exports = function (app) {
       } else {
         pagamento.id = resultado.insertId;
         console.log('pagamento criado');
+
+        let memcachedClient = app.servicos.memcachedClient()
+        memcachedClient.set('pagamento-' + pagamento.id, pagamento, 60000, (erro) => {
+          if (erro) {
+            console.log("CACHE - erro ao criar chave: " + JSON.stringify(erro));
+            return
+          }
+          console.log("Chave criada: pagamento-" + pagamento.id);
+        })
 
         if (pagamento.forma_de_pagamento == 'cartao') {
           let cartao = req.body["cartao"];

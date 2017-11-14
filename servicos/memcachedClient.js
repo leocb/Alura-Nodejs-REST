@@ -1,11 +1,17 @@
 let memcached = require('memcached')
 
-let cliente = new memcached('localhost:11211', {
-    retries: 10,
-    retry: 10000,
-    remove: true
-})
+module.exports = function () {
+    return createMemcachedClient
+}
 
+function createMemcachedClient() {
+    return new memcached('localhost:11211', {
+        retries: 10,
+        retry: 10000,
+        remove: true
+    })
+}
+/*
 cliente.set('pagamento-3', {
     id: 20
 }, 60000, function (erro) {
@@ -19,4 +25,4 @@ cliente.get('pagamento-3', function (erro, retorno) {
     }
 
     console.log('HIT - ' + JSON.stringify(retorno))
-})
+})*/
