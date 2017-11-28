@@ -1,6 +1,6 @@
 let winston = require('winston')
 
-let logger = new winston.Logger({
+module.exports = new winston.Logger({
     transports: [
         new winston.transports.File({
             level: 'info',

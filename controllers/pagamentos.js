@@ -1,3 +1,5 @@
+let logger = require('../servicos/logger')
+
 module.exports = function (app) {
   app.get('/pagamentos', function (req, res) {
     console.log('Recebida requisicao de teste na porta 3000.')
@@ -7,6 +9,7 @@ module.exports = function (app) {
   app.get('/pagamentos/pagamento/:id', function (req, res) {
     let id = req.params.id
     console.log('consultando pagamento ' + id);
+    logger.info('consultando pagamento ' + id);
 
 
     //tenta pelo cache primeiro
