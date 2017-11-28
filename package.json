@@ -18,6 +18,7 @@
     "restify": "^6.2.3",
     "restify-clients": "^1.5.2",
     "restify-plugins": "^1.6.0",
-    "soap": "^0.23.0"
+    "soap": "^0.23.0",
+    "winston": "^2.4.0"
   }
 }
